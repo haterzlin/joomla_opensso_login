@@ -138,7 +138,7 @@ class plgAuthenticationSSOLogin extends JPlugin
             $db->quoteName('password') . ' = "'.$password.'"'
         );
         $conditions = array(
-            $db->quoteName('username') . ' = '.$user->username, 
+            $db->quoteName('username') . ' = "'.$user->username.'"', 
         );
         $query->update($db->quoteName('#__users'))->set($fields)->where($conditions);
         $db->setQuery( $query );
