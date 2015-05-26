@@ -126,25 +126,28 @@ class plgAuthenticationSSOLogin extends JPlugin
     }
     
     function onUserAfterLogin() {
-        // http://stackoverflow.com/questions/2727043/using-php-to-create-a-joomla-user-password
-        $salt = JUserHelper::genRandomPassword(32);
-        $crypt = JUserHelper::getCryptedPassword($_POST["password"] , $salt);
-        $password = $crypt.':'.$salt;
-        // Get a database object
-        $user = JFactory::getUser();
-        $db =& JFactory::getDBO();
-        $query = $db->getQuery(true);
-        $fields = array(
-            $db->quoteName('password') . ' = "'.$password.'"'
-        );
-        $conditions = array(
-            $db->quoteName('username') . ' = "'.$user->username.'"', 
-        );
-        $query->update($db->quoteName('#__users'))->set($fields)->where($conditions);
-        $db->setQuery( $query );
-        $result = $db->execute();
-        //if ($result) error_log("plugin ssologin saved password of user ".$user->username." to joomla db");
-        //else error_log("plugin ssologin failed to save password of user ".$user->username." to joomla db: ".mysql_error());
+        if (isSet($_POST["password"]) && $_POST["password"]!="") {
+            // http://stackoverflow.com/questions/2727043/using-php-to-create-a-joomla-user-password
+            jimport('joomla.user.helper');
+            $salt = JUserHelper::genRandomPassword(32);
+            $crypt = JUserHelper::getCryptedPassword($_POST["password"] , $salt);
+            $password = $crypt.':'.$salt;
+            // Get a database object
+            $user = JFactory::getUser();
+            $db =& JFactory::getDBO();
+            $query = $db->getQuery(true);
+            $fields = array(
+                $db->quoteName('password') . ' = "'.$password.'"'
+            );
+            $conditions = array(
+                $db->quoteName('username') . ' = "'.$user->username.'"', 
+            );
+            $query->update($db->quoteName('#__users'))->set($fields)->where($conditions);
+            $db->setQuery( $query );
+            $result = $db->execute();
+            //if ($result) error_log("plugin ssologin saved password of user ".$user->username." to joomla db");
+            //else error_log("plugin ssologin failed to save password of user ".$user->username." to joomla db: ".mysql_error());
+        }
     }
 }
 ?>
