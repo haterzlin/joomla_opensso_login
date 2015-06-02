@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension type="package" version="0.2" method="upgrade">
+	<name>Package OpenSSO Login</name>
+	<packagename>SSO Login</packagename>
+	<version>0.2</version>
+	<author>Ľubomír Mlích</author>
+	<authorEmail>mlich.lubomir@cpost.cz</authorEmail>
+	<creationDate>May 2015</creationDate>
+	<description>PKG_SSOLOGIN_DESCRIPTION</description>
+	<files>
+		<file type="library" id="lib_opensso">lib_opensso.zip</file>
+		<file type="plugin" id="savepassword" group="user">plg_user_savepassword.zip</file>
+		<file type="plugin" id="openssoauthentication" group="authentication">plg_authentication_openssologin.zip</file>
+		<file type="plugin" id="openssosso" group="system">plg_system_openssosso.zip</file>
+	</files>
+	<languages>
+		<language tag="en-GB">language/en-GB/en-GB.pkg_ssologin.ini</language>
+		<language tag="cs-CZ">language/cs-CZ/cs-CZ.pkg_ssologin.ini</language>
+		<!-- uvest i sys language soubory?? zjistit v dokumentaci -->
+	</languages>
+</extension>

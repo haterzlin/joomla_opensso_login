@@ -16,29 +16,30 @@ defined('_JEXEC') or die();
  * @subpackage Plugins
  * @license    GNU/GPL
  */
-class plgAuthenticationSSOLogin extends JPlugin
+class OpenssoBaseFunctions extends JPlugin
 {
     /**
-     * This method should handle any authentication and report back to the subject
-     * We authenticate to OpenSSO and then to JoomlaDB
-     * Password is saved to Joomla DB after succesful authentication
-     * User is created in DB if don't exists
-     *
-     * @access    public
-     * @param     array     $credentials    Array holding the user credentials ('username' and 'password')
-     * @param     array     $options        Array of extra options
-     * @param     object    $response       Authentication response object
-     * @return    boolean
-     * @since 1.5
+     * basic functions used for communication with OpenSSO
+     * ssotoken - store for current user token
+     * ssoatributtespage - store for current user attributes
      */
 
     private $ssotoken = "";
     private $ssoatributtespage = "";
 
+	public function __construct(& $subject, $config)
+	{
+		parent::__construct($subject, $config);
+		$this->loadLanguage();
+		$plugin = JPluginHelper::getPlugin('authentication', 'openssologin');
+        $params = new JRegistry($plugin->params);
+        $this->params = $params;
+	}
+
     function get_new_SSO_token($login, $password) {
         // connects to RESTful authentication service and creates new session
         $ssl = "";
-        if ($this->params->get('sso_protocol') == "https") $ssl = "ssl://";
+        if ($this->params->get('sso_protocol') == "https") $ssl = "ssl://"; // is config included?
         $host = $this->params->get('sso_host');
         $port = $this->params->get('sso_port');
         $page = "/".$this->params->get('sso_deploy_path')."/identity/authenticate?username=".$login."&password=".$password."&".$this->params->get('sso_authentication_additional_parameters');
@@ -108,46 +109,22 @@ class plgAuthenticationSSOLogin extends JPlugin
       return "";
     }
 
-    function onUserAuthenticate( $credentials, $options, &$response ) {
-        // on authenticate attempt, contact OpenSSO, get SSO token and get user attributes
-        if ($this->get_new_SSO_token($credentials['username'], $credentials['password'])) {
-            $response->status = JAuthentication::STATUS_SUCCESS;
-            $response->username = $credentials['username'];
-            $this->SSO_get_attrs();
-            $response->email = $this->attrs_get_attr_value($this->params->get('sso_email_attribute_name'));
-            $response->fullname = $this->attrs_get_attr_value($this->params->get('sso_fullname_attribute_name'));
-            //error_log("user ".$credentials['username']." logged in with ssologin plugin");
+    function verify_SSO_token() {
+        /* Verify SSO token value at OpenSSO and returns true or false */
+        $url = $this->params->get('sso_protocol')."://".$this->params->get('sso_host')."/".$this->params->get('sso_deploy_path')."/identity/isTokenValid";
+        $opts = array( 'http' => array( 'method' => 'GET', 'header' => "Cookie: ".$this->params->get('sso_token_cookie_name')."=".$_COOKIE[$this->params->get('sso_token_cookie_name')]."\r\n" ));
+        $context = stream_context_create($opts);
+        $file_contents = @file_get_contents($url, false, $context); //@ will make errors disappear
+        if (strpos($file_contents,"boolean=true") === False ) {
+            //error_log(date("Y-m-d H:i:s")." ".$_SESSION["uid"]." ".$token_id." invalid, REST page content: ".$file_contents, 3, "/app/iwa1_ws/logs/token_verify.log");
+            return False;
         }
         else {
-	        $response->status = JAuthentication::STATUS_FAILURE;
-	        $response->error_message = 'Invalid username and password';
-	         error_log("user ".$credentials['username']." login error with ssologin plugin");
+            //error_log(date("Y-m-d H:i:s")." ".$_SESSION["uid"]." ".$token_id." ok\n", 3, "/app/iwa1_ws/logs/token_verify.log");
+            $this->ssotoken = $_COOKIE[$this->params->get('sso_token_cookie_name')];
+            return True;
         }
     }
-    
-    function onUserAfterLogin() {
-        if (isSet($_POST["password"]) && $_POST["password"]!="") {
-            // http://stackoverflow.com/questions/2727043/using-php-to-create-a-joomla-user-password
-            jimport('joomla.user.helper');
-            $salt = JUserHelper::genRandomPassword(32);
-            $crypt = JUserHelper::getCryptedPassword($_POST["password"] , $salt);
-            $password = $crypt.':'.$salt;
-            // Get a database object
-            $user = JFactory::getUser();
-            $db =& JFactory::getDBO();
-            $query = $db->getQuery(true);
-            $fields = array(
-                $db->quoteName('password') . ' = "'.$password.'"'
-            );
-            $conditions = array(
-                $db->quoteName('username') . ' = "'.$user->username.'"', 
-            );
-            $query->update($db->quoteName('#__users'))->set($fields)->where($conditions);
-            $db->setQuery( $query );
-            $result = $db->execute();
-            //if ($result) error_log("plugin ssologin saved password of user ".$user->username." to joomla db");
-            //else error_log("plugin ssologin failed to save password of user ".$user->username." to joomla db: ".mysql_error());
-        }
-    }
+
 }
 ?>
