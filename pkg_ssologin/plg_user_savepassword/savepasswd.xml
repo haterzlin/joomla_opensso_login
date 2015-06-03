@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension version="0.1" type="plugin" group="user" method="upgrade">
+<extension version="3.0" type="plugin" group="user" method="upgrade">
 	<name>plg_user_savepasswd</name>
 	<author>Ľubomír Mlích</author>
-	<creationDate>May 2015</creationDate>
+	<creationDate>June 2015</creationDate>
 	<copyright>Copyright (C) 2015 Open Source Matters. All rights reserved.</copyright>
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<authorEmail>mlich.lubomir@cpost.cz</authorEmail>
-	<version>0.2</version>
+	<version>0.3</version>
 	<description>Saves password after succesfull login</description>
 	<files>
 		<filename plugin="savepasswd">savepasswd.php</filename>

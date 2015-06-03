@@ -38,8 +38,7 @@ class plgAuthenticationOpenSSOLogin extends OpenssoBaseFunctions
             $this->SSO_get_attrs();
             $response->email = $this->attrs_get_attr_value($this->params->get('sso_email_attribute_name'));
             $response->fullname = $this->attrs_get_attr_value($this->params->get('sso_fullname_attribute_name'));
-            //error_log("user ".$credentials['username']." logged in with ssologin plugin");
-            //jeste by se mela vygenerovat cookie s tokenem a ulozit do prohlizece pro domenu .cpost.cz
+            error_log("user ".$credentials['username']." logged in with ssologin plugin");
         }
         else {
 	        $response->status = JAuthentication::STATUS_FAILURE;

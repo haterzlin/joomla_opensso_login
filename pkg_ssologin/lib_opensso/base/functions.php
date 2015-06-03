@@ -27,14 +27,14 @@ class OpenssoBaseFunctions extends JPlugin
     private $ssotoken = "";
     private $ssoatributtespage = "";
 
-	public function __construct(& $subject, $config)
-	{
+    public function __construct(& $subject, $config)
+    {
 		parent::__construct($subject, $config);
 		$this->loadLanguage();
 		$plugin = JPluginHelper::getPlugin('authentication', 'openssologin');
         $params = new JRegistry($plugin->params);
         $this->params = $params;
-	}
+    }
 
     function get_new_SSO_token($login, $password) {
         // connects to RESTful authentication service and creates new session
@@ -74,6 +74,19 @@ class OpenssoBaseFunctions extends JPlugin
                         array_shift($explode);
                         $value = implode("=",$explode);
                         $this->ssotoken = $value;
+                        //error_log("saved ssotoken: ".$this->ssotoken);
+                        if (! isset($_SERVER["HTTP_HOST"]))
+                            $domain = $_SERVER["SERVER_NAME"];
+                        else
+                           $domain = $_SERVER["HTTP_HOST"];
+                        $exploded_domain = explode(".", $domain);
+                        $domain = implode(".",array_slice($exploded_domain, -2));
+                        //error_log("domain is ".$domain." sso token is ".$this->ssotoken);
+                        $result = setrawcookie($this->params->get('sso_token_cookie_name'), $this->ssotoken, time() + 60*60*10, "/", $domain, True, True);
+                        if ($result) {
+                            //error_log("opensso token cookie created");
+                        }
+
                         return True;
                     }
                 }
@@ -125,6 +138,19 @@ class OpenssoBaseFunctions extends JPlugin
             return True;
         }
     }
+
+    function destroySSOsession() {
+        if (isset($_COOKIE[$this->params->get('sso_token_cookie_name')])) {
+            $url = $this->params->get('sso_protocol')."://".$this->params->get('sso_host')."/".$this->params->get('sso_deploy_path')."/identity/logout?subjectid=".$_COOKIE[$this->params->get('sso_token_cookie_name')];
+            $opts = array( 'http' => array( 'method' => 'POST'));
+            $context = stream_context_create($opts);
+            $result = file_get_contents($url, false, $context);
+            if ($result) {
+                //error_log("OpenSSO session destroyed succesfully");
+            }
+        }
+    }
+
 
 }
 ?>

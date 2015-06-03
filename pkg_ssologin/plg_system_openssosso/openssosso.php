@@ -54,18 +54,20 @@ parent::__construct( $subject, $config );
                     // login to user with that id
                     if (isset($result) && $result != False) {
                         $user->load($result);
-                        error_log("Single Sign On with OpenSSO to user ".$uid);
+                        //error_log("Single Sign On with OpenSSO to user ".$uid);
                     }
                 }
             }
         }
         else {
-            error_log("user is not guest");
+            //error_log("user is not guest");
             // overeni, zda neni treba prodlouzit session na OpenSSO
         }
        //error_log("onAfterInitialise end");
     }
 
-
+    function onUserLogout() {
+        $this->destroySSOsession();
+    }
 
 }

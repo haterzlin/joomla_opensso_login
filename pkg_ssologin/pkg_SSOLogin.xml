@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<extension type="package" version="0.2" method="upgrade">
+<extension type="package" version="3.0" method="upgrade">
 	<name>Package OpenSSO Login</name>
 	<packagename>SSO Login</packagename>
-	<version>0.2</version>
+	<version>0.3</version>
 	<author>Ľubomír Mlích</author>
 	<authorEmail>mlich.lubomir@cpost.cz</authorEmail>
-	<creationDate>May 2015</creationDate>
+	<creationDate>June 2015</creationDate>
 	<description>PKG_SSOLOGIN_DESCRIPTION</description>
 	<files>
 		<file type="library" id="lib_opensso">lib_opensso.zip</file>
