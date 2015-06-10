@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="3.0" type="plugin" group="user" method="upgrade">
+    <name>PLG_USER_SAVEPASSWORD_NAME</name>
+    <author>Ľubomír Mlích</author>
+    <creationDate>2015-06</creationDate>
+    <copyright>Copyright (C) 2015 Open Source Matters. All rights reserved.</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <authorEmail>mlich.lubomir@cpost.cz</authorEmail>
+    <version>1.0</version>
+    <description>PLG_USER_SAVEPASSWORD_XML_DESCRIPTION</description>
+    <files>
+        <filename plugin="savepasswd">savepasswd.php</filename>
+    </files>
+    <languages>
+        <language tag="en-GB">language/en-GB/en-GB.plg_user_savepasswd.ini</language>
+        <language tag="en-GB">language/en-GB/en-GB.plg_user_savepasswd.sys.ini</language>
+        <language tag="cs-CZ">language/cs-CZ/cs-CZ.plg_user_savepasswd.ini</language>
+        <language tag="cs-CZ">language/cs-CZ/cs-CZ.plg_user_savepasswd.sys.ini</language>
+    </languages>
+</extension>

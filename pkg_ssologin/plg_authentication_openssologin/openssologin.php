@@ -8,7 +8,7 @@
  
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die();
-jimport('opensso.base.functions'); 
+jimport('openssoplugin.base.functions'); 
 
 /**
  * SSOLogin Authentication Plugin.  Based on the example.php plugin in the Joomla! Core installation
@@ -17,7 +17,7 @@ jimport('opensso.base.functions');
  * @subpackage Plugins
  * @license    GNU/GPL
  */
-class plgAuthenticationOpenSSOLogin extends OpenssoBaseFunctions
+class plgAuthenticationOpenSSOLogin extends plgSystemOpenSSOPlugin
 {
     /**
      *

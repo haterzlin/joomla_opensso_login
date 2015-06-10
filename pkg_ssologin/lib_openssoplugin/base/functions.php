@@ -16,7 +16,7 @@ defined('_JEXEC') or die();
  * @subpackage Plugins
  * @license    GNU/GPL
  */
-class OpenssoBaseFunctions extends JPlugin
+class plgSystemOpenSSOPlugin extends JPlugin
 {
     /**
      * basic functions used for communication with OpenSSO
@@ -29,11 +29,32 @@ class OpenssoBaseFunctions extends JPlugin
 
     public function __construct(& $subject, $config)
     {
-		parent::__construct($subject, $config);
-		$this->loadLanguage();
-		$plugin = JPluginHelper::getPlugin('authentication', 'openssologin');
+        parent::__construct($subject, $config);
+        $this->loadLanguage();
+        $plugin = JPluginHelper::getPlugin('authentication', 'openssologin');
         $params = new JRegistry($plugin->params);
         $this->params = $params;
+        $this->session = JFactory::getSession();
+    }
+
+    public function create_SSO_token_cookie() {
+        if (! isset($_SERVER["HTTP_HOST"]))
+            $domain = $_SERVER["SERVER_NAME"];
+        else
+            $domain = $_SERVER["HTTP_HOST"];
+        $exploded_domain = explode(".", $domain);
+        $domain = implode(".",array_slice($exploded_domain, -2));
+        //error_log("domain is ".$domain." sso token is ".$this->ssotoken);
+        $result = setrawcookie($this->params->get('sso_token_cookie_name'), $this->ssotoken, time() + 60*60*10, "/", $domain, True, True);
+        return $result;
+    }
+    
+    public function set_next_SSO_token_expiration_time() {
+        $this->session->set('ssorefreshsessiontime', time() + $this->params->get('sso_session_update_interval'));
+    }
+
+    public function reset_SSO_token_expiration_time() {
+        $this->session->set('ssorefreshsessiontime', 0);
     }
 
     function get_new_SSO_token($login, $password) {
@@ -75,18 +96,8 @@ class OpenssoBaseFunctions extends JPlugin
                         $value = implode("=",$explode);
                         $this->ssotoken = $value;
                         //error_log("saved ssotoken: ".$this->ssotoken);
-                        if (! isset($_SERVER["HTTP_HOST"]))
-                            $domain = $_SERVER["SERVER_NAME"];
-                        else
-                           $domain = $_SERVER["HTTP_HOST"];
-                        $exploded_domain = explode(".", $domain);
-                        $domain = implode(".",array_slice($exploded_domain, -2));
-                        //error_log("domain is ".$domain." sso token is ".$this->ssotoken);
-                        $result = setrawcookie($this->params->get('sso_token_cookie_name'), $this->ssotoken, time() + 60*60*10, "/", $domain, True, True);
-                        if ($result) {
-                            //error_log("opensso token cookie created");
-                        }
-
+                        $this->create_SSO_token_cookie();
+                        $this->set_next_SSO_token_expiration_time();
                         return True;
                     }
                 }
@@ -135,6 +146,7 @@ class OpenssoBaseFunctions extends JPlugin
         else {
             //error_log(date("Y-m-d H:i:s")." ".$_SESSION["uid"]." ".$token_id." ok\n", 3, "/app/iwa1_ws/logs/token_verify.log");
             $this->ssotoken = $_COOKIE[$this->params->get('sso_token_cookie_name')];
+            $this->set_next_SSO_token_expiration_time();
             return True;
         }
     }
@@ -147,6 +159,7 @@ class OpenssoBaseFunctions extends JPlugin
             $result = file_get_contents($url, false, $context);
             if ($result) {
                 //error_log("OpenSSO session destroyed succesfully");
+                $this->reset_SSO_token_expiration_time();
             }
         }
     }

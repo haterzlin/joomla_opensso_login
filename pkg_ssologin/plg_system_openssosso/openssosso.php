@@ -3,12 +3,12 @@
 defined( '_JEXEC' ) or die( 'Restricted access' );
  
 jimport( 'joomla.plugin.plugin' );
-jimport( 'opensso.base.functions' );
+jimport( 'openssoplugin.base.functions' );
  
 /**
  * OpenSSO system plugin
  */
-class plgSystemOpenssosso extends OpenssoBaseFunctions
+class plgSystemOpenssosso extends plgSystemOpenSSOPlugin
 {
 /**
 * Constructor.
@@ -18,30 +18,24 @@ class plgSystemOpenssosso extends OpenssoBaseFunctions
 * @param array   $config  An array that holds the plugin configuration
 * @since 1.0
 */
-public function __construct( &$subject, $config )
-{
-parent::__construct( $subject, $config );
- 
-// Do some extra initialisation in this constructor if required
-}
  
     function onAfterInitialise() {
         /* zjistime, jestli je  uzivatel prihlaseny a pokud ne, zkusime udelat SSO */
         $user = JFactory::getUser();
-        $plugin = JPluginHelper::getPlugin('authentication', 'openssologin');
-        $params = new JRegistry($plugin->params);
+        //$plugin = JPluginHelper::getPlugin('authentication', 'openssologin');
+        //$params = new JRegistry($plugin->params);
         //echo print_r($this->params->get("sso_token_cookie_name"));
         //error_log("onAfterInitialise");
         if ($user->guest) {
             //error_log("user is guest, cookie ".$params->get('sso_token_cookie_name')." = ".$_COOKIE[$params->get('sso_token_cookie_name')]);
-            if (isSet($_COOKIE[$params->get('sso_token_cookie_name')])) {
+            if (isSet($_COOKIE[$this->params->get('sso_token_cookie_name')])) {
                 //error_log("SSO token cookie is set");
                 if ($this->verify_SSO_token()) {
                     //login user
                     //error_log("SSO token is verified");
                     // get username from OpenSSO
                     $this->SSO_get_attrs();
-                    $uid = $this->attrs_get_attr_value($params->get('sso_username_attribute_name'));
+                    $uid = $this->attrs_get_attr_value($this->params->get('sso_username_attribute_name'));
                     // see if its in db
                     $db =& JFactory::getDBO();
                     $query = $db->getQuery(true);
@@ -63,6 +57,12 @@ parent::__construct( $subject, $config );
             //error_log("user is not guest");
             // overeni, zda neni treba prodlouzit session na OpenSSO
         }
+        if ($this->session->get('ssorefreshsessiontime') != 0 && $this->session->get('ssorefreshsessiontime') < time()) {
+            if ($this->verify_SSO_token()) {
+                $this->set_next_SSO_token_expiration_time();
+            }
+        }
+        //error_log("next sso session update ". date('Y-m-d H:i', $this->session->get('ssorefreshsessiontime')));
        //error_log("onAfterInitialise end");
     }
 

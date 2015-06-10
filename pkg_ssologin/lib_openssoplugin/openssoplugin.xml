@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="library" method="upgrade" version="3.0">
+    <name>LIB_OPENSSOPLUGIN_NAME</name>
+    <libraryname>openssoplugin</libraryname>
+    <author>Ľubomír Mlích</author>
+    <creationDate>2015-06</creationDate>
+    <copyright>Copyright (C) 2015 Open Source Matters. All rights reserved.</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <authorEmail>mlich.lubomir@cpost.cz</authorEmail>
+    <version>1.0</version>
+    <description>LIB_OPENSSOPLUGIN_XML_DESCRIPTION</description>
+    <files>
+        <folder>base</folder>
+    </files>
+    <languages>
+        <language tag="en-GB">language/en-GB/en-GB.lib_openssoplugin.ini</language>
+        <language tag="en-GB">language/en-GB/en-GB.lib_openssoplugin.sys.ini</language>
+        <language tag="cs-CZ">language/cs-CZ/cs-CZ.lib_openssoplugin.ini</language>
+        <language tag="cs-CZ">language/cs-CZ/cs-CZ.lib_openssoplugin.sys.ini</language>
+    </languages>
+</extension>

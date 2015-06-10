@@ -1,19 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="3.0" type="plugin" group="authentication" method="upgrade">
-	<name>Authentication - OpenSSO</name>
+	<name>AUTHENTICATION_OPENSSO</name>
 	<author>Ľubomír Mlích</author>
-	<creationDate>June 2015</creationDate>
+	<creationDate>2015-06</creationDate>
 	<copyright>Copyright (C) 2015 Open Source Matters. All rights reserved.</copyright>
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<authorEmail>mlich.lubomir@cpost.cz</authorEmail>
-	<version>0.3</version>
+	<version>1.0</version>
 	<description>PLG_AUTH_SSOLOGIN_XML_DESCRIPTION</description>
 	<files>
 		<filename plugin="openssologin">openssologin.php</filename>
 	</files>
+	<languages>
+		<language tag="en-GB">language/en-GB/en-GB.plg_authentication_openssologin.ini</language>
+		<language tag="en-GB">language/en-GB/en-GB.plg_authentication_openssologin.sys.ini</language>
+		<language tag="cs-CZ">language/cs-CZ/cs-CZ.plg_authentication_openssologin.ini</language>
+		<language tag="cs-CZ">language/cs-CZ/cs-CZ.plg_authentication_openssologin.sys.ini</language>
+	</languages>
 	<config>
 		<fields name="params">
-
 			<fieldset name="basic">
 				<field name="sso_protocol" type="radio"
 					default="https"

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension type="package" version="3.0" method="upgrade">
+	<name>PKG_SSOLOGIN_NAME</name>
+	<packagename>ssologin</packagename>
+	<version>1.0</version>
+	<author>Ľubomír Mlích</author>
+	<authorEmail>mlich.lubomir@cpost.cz</authorEmail>
+	<creationDate>2015-06</creationDate>
+	<description>PKG_SSOLOGIN_XML_DESCRIPTION</description>
+	<files>
+		<file type="library" id="openssoplugin">lib_openssoplugin.zip</file>
+		<file type="plugin" id="savepasswd" group="user">plg_user_savepasswd.zip</file>
+		<file type="plugin" id="openssologin" group="authentication">plg_authentication_openssologin.zip</file>
+		<file type="plugin" id="openssosso" group="system">plg_system_openssosso.zip</file>
+	</files>
+	<languages>
+		<language tag="en-GB">language/en-GB/en-GB.pkg_ssologin.ini</language>
+		<language tag="en-GB">language/en-GB/en-GB.pkg_ssologin.sys.ini</language>
+		<language tag="cs-CZ">language/cs-CZ/cs-CZ.pkg_ssologin.ini</language>
+		<language tag="cs-CZ">language/cs-CZ/cs-CZ.pkg_ssologin.sys.ini</language>
+	</languages>
+</extension>
